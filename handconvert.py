@@ -29,19 +29,26 @@ prog8=re.compile('Bluff Avenue Game #\d+: (.+, Table \d+) - (\$[\d\.]+/\$[\d\.]+
 prog9=re.compile('^(\S+): posts') # for double blind post warning
 
 
-splitCount=0 #for last 4 digit purposes
+# splitCount=0 #for last 4 digit purposes
 gametimeStorage=[] #for time duplication checking, now with gamename too
 for split in split_list:
-    
     straddleFlag=True # for the print of the straddle
     
-    splitCount+=1 #to update the splitCount
+    # splitCount+=1 #to update the splitCount
     
+
     for line in list(split):
+
         if prog2.search(line):
             split.remove(line)
     
     button="-1"
+    # for line in list(split):
+    #     if line.find('CMU Brandon')!=-1:
+    #         line=line.replace('CMU Brandon','CMUBrandon')
+    #         # print line
+
+        
     
     for line in list(split):
         if prog.match(line):
@@ -74,7 +81,11 @@ for split in split_list:
     #print(gametime)
         
     gamedate="20"+first_re.group(8)+"/"+first_re.group(6).zfill(2)+"/"+first_re.group(7).zfill(2)
-    gamenumber=gamedate.replace("/","")+gametime.replace(":","").zfill(6)+str(splitCount%1000).zfill(4)
+    hash=0
+    for stri in split:
+        for chrc in stri:
+            hash=(ord(chrc)*13+hash)%9973
+    gamenumber=gamedate.replace("/","")+gametime.replace(":","").zfill(6)+str(hash%10000).zfill(4)
     
     split[0]="PokerStars Hand #"+gamenumber+":  "+gametype+" ("+stake+" USD) - "+gamedate+" "+gametime+" ET"
     #split[0]="PokerStars Hand #"+str(random.randint(1,1000000000000))+":  Omaha Pot Limit ($0.10/$0.20 USD) - 2017/07/19 4:59:02 ET"
@@ -99,6 +110,7 @@ for split in split_list:
         if line.find("Side pot")!=-1: #winner of side pot needs to be "won ($XX.xx)"  not "lost"
             print("Side pot on "+gametime)
         
+        line=line.replace('CMU Brandon','CMUBrandon')
         
         if state<2:
             state+=1
