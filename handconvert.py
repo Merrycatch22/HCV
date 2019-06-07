@@ -22,8 +22,10 @@ for hand in hand_list:
     split_list.append(hand.splitlines()) #split_list is a list of lists: each hand split into lines.
 #print(split_list[0])
 
-prog=re.compile('^The button is in seat')
-prog2=re.compile('\D:|shows|wins|mucks')
+#for regexing the button.
+btnProg=re.compile('^The button is in seat')
+#a result line is removed from the string.
+rmResultProg=re.compile('\D:|shows|wins|mucks')
 prog3=re.compile('^Uncalled bet of (\$[\d.\.]+)')
 prog4=re.compile('posts the (small|big) blind of')
 prog5=re.compile('^(Seat \d: \S+ \(\S+)(\))')
@@ -47,7 +49,7 @@ for split in split_list:
 
     for line in list(split):
 
-        if prog2.search(line):
+        if rmResultProg.search(line):
             split.remove(line)
     
     button="-1"
@@ -59,7 +61,7 @@ for split in split_list:
         
     
     for line in list(split):
-        if prog.match(line):
+        if btnProg.match(line):
             #print(line.find('#'))
             button=line[line.find('#')+1:]
             #print(button)
