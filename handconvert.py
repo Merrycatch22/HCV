@@ -1,10 +1,18 @@
+#re is the regex import
 import re, random
+import sys
 
-filename=raw_input("filename: ") #takes the file's name
+# the name of the file to process.
+fileName=sys.argv[1]
 
-file = open(filename)
+#open the file to extract text.
+file = open(fileName)
 delim="Bluff Avenue Game"
-hand_list = [delim+e for e in file.read().split(delim) if e] #the list of hands, delimited.
+
+#the list of hands, delimited.
+hand_list = [delim+e for e in file.read().split("\n"+delim) if e]
+
+hand_list[0]=str(hand_list[0]).replace(delim,"",1)
 file.close()
 
 #print(hand_list)
@@ -193,8 +201,10 @@ for split in split_list:
             
 #print(split_list)
 
+directory = fileName.split("\\")
+fileName=directory[len(directory)-1]
 
-output=open('out\out'+filename,'w')
+output=open('out\out'+fileName,'w')
 #output2=open('..\..\Desktop\PS_HH\Nicholas\out'+filename,'w')
 for split in split_list:
     for line in split:
