@@ -18,7 +18,9 @@ file.close()
 #hack for the rawList, extra delim removed
 rawList[0]=str(rawList[0]).replace(delim,"",1) 
 
-#print(hand_list)
+handList=[]
+for raw in rawList:
+    handList.append(Hand(raw))
 
 split_list=[]
 for hand in rawList:
