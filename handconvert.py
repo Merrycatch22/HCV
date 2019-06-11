@@ -1,6 +1,8 @@
 #re is the regex import
 import re, random
 import sys
+from classHand import Hand
+from platform import system
 
 # the name of the file to process.
 fileName=sys.argv[1]
@@ -10,33 +12,34 @@ file = open(fileName)
 delim="Bluff Avenue Game"
 
 #the list of hands, delimited.
-hand_list = [delim+e for e in file.read().split("\n"+delim) if e]
-
-hand_list[0]=str(hand_list[0]).replace(delim,"",1)
+rawList = [delim+e for e in file.read().split("\n"+delim) if e]
 file.close()
+
+#hack for the rawList, extra delim removed
+rawList[0]=str(rawList[0]).replace(delim,"",1) 
 
 #print(hand_list)
 
 split_list=[]
-for hand in hand_list:
+for hand in rawList:
     split_list.append(hand.splitlines()) #split_list is a list of lists: each hand split into lines.
 #print(split_list[0])
 
 #for regexing the button.
 btnProg=re.compile('^The button is in seat')
 #a result line is removed from the string.
-rmResultProg=re.compile('\D:|shows|wins|mucks')
-prog3=re.compile('^Uncalled bet of (\$[\d.\.]+)')
-prog4=re.compile('posts the (small|big) blind of')
-prog5=re.compile('^(Seat \d: \S+ \(\S+)(\))')
-prog6=re.compile('^(\S+) ')
+rmResultProg=re.compile(r'\D:|shows|wins|mucks')
+prog3=re.compile(r'^Uncalled bet of (\$[\d.\.]+)')
+prog4=re.compile(r'posts the (small|big) blind of')
+prog5=re.compile(r'^(Seat \d: \S+ \(\S+)(\))')
+prog6=re.compile(r'^(\S+) ')
 
-prog7=re.compile('^Seat (\d)') #checks if the seats are top and summary
+prog7=re.compile(r'^Seat (\d)') #checks if the seats are top and summary
 
 #prog8=re.compile('Bluff Avenue Game #\d+: (.+), Table \d+ - (\$[\d\.]+/\$[\d\.]+) - (\S+ Limit) (\S+) - (\d+:\d+:\d+) \S+ \S+ - (\d+)/(\d+)/(\d+)')
-prog8=re.compile('Bluff Avenue Game #\d+: (.+, Table \d+) - (\$[\d\.]+/\$[\d\.]+) - (\S+ Limit) (\S+) - (\d+:\d+:\d+ \S+) \S+ - (\d+)/(\d+)/(\d+)')
+prog8=re.compile(r'Bluff Avenue Game #\d+: (.+, Table \d+) - (\$[\d\.]+/\$[\d\.]+) - (\S+ Limit) (\S+) - (\d+:\d+:\d+ \S+) \S+ - (\d+)/(\d+)/(\d+)')
 
-prog9=re.compile('^(\S+): posts') # for double blind post warning
+prog9=re.compile(r'^(\S+): posts') # for double blind post warning
 
 
 # splitCount=0 #for last 4 digit purposes
@@ -202,11 +205,17 @@ for split in split_list:
     #print(blindStringStorage)
             
 #print(split_list)
+    directory=[]
+    output=None
+    if system().lower() == 'windows':
+        directory = fileName.split("\\")
+        fileName=directory[len(directory)-1]
+        output=open('out\out'+fileName,'w')
+    else:
+        directory = fileName.split("/")
+        fileName=directory[len(directory)-1]
+        output=open('out/out'+fileName,'w')
 
-directory = fileName.split("\\")
-fileName=directory[len(directory)-1]
-
-output=open('out\out'+fileName,'w')
 #output2=open('..\..\Desktop\PS_HH\Nicholas\out'+filename,'w')
 for split in split_list:
     for line in split:
