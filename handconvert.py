@@ -18,9 +18,10 @@ file.close()
 #hack for the rawList, extra delim removed
 rawList[0]=str(rawList[0]).replace(delim,"",1) 
 
-handList=[]
+handList=set()
 for raw in rawList:
-    handList.append(Hand(raw))
+    handList.add(Hand(raw))
+print(len(handList))
 
 split_list=[]
 for hand in rawList:
@@ -28,10 +29,13 @@ for hand in rawList:
 #print(split_list[0])
 
 #for regexing the button.
-btnProg=re.compile('^The button is in seat')
+btnProg=re.compile(r'^The button is in seat')
+
 #a result line is removed from the string.
 rmResultProg=re.compile(r'\D:|shows|wins|mucks')
-prog3=re.compile(r'^Uncalled bet of (\$[\d.\.]+)')
+
+#modifies uncalled bet to ps type.
+uncalledBetProg=re.compile(r'^Uncalled bet of (\$[\d.\.]+)')
 prog4=re.compile(r'posts the (small|big) blind of')
 prog5=re.compile(r'^(Seat \d: \S+ \(\S+)(\))')
 prog6=re.compile(r'^(\S+) ')
@@ -131,9 +135,9 @@ for split in split_list:
             state+=1
         elif state==2:
             #print('state is 2')
-            if prog3.match(line):
+            if uncalledBetProg.match(line):
                 #print('line matched')
-                line=prog3.sub(r'Uncalled bet (\1)',line)
+                line=uncalledBetProg.sub(r'Uncalled bet (\1)',line)
                 #print(line)
             elif line=='*** SUMMARY ***':
                 state=3
