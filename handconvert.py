@@ -21,40 +21,42 @@ rawList[0]=str(rawList[0]).replace(delim,"",1)
 handList=set()
 for raw in rawList:
     handList.add(Hand(raw))
-print(len(handList))
+# print(len(handList))
 
 split_list=[]
 for hand in rawList:
     split_list.append(hand.splitlines()) #split_list is a list of lists: each hand split into lines.
 #print(split_list[0])
 
-#for regexing the button.
+# for regexing the button.
 btnProg=re.compile(r'^The button is in seat')
 
-#a result line is removed from the string.
+# a result line is removed from the string.
 rmResultProg=re.compile(r'\D:|shows|wins|mucks')
 
-#modifies uncalled bet to ps type.
+# modifies uncalled bet to ps type.
 uncalledBetProg=re.compile(r'^Uncalled bet of (\$[\d.\.]+)')
-prog4=re.compile(r'posts the (small|big) blind of')
-prog5=re.compile(r'^(Seat \d: \S+ \(\S+)(\))')
+
+# changes the blind posting lines
+blindProg=re.compile(r'posts the (small|big) blind of')
+
+# gets the money on the table
+moneyProg=re.compile(r'^(Seat \d: \S+ \(\S+)(\))')
 prog6=re.compile(r'^(\S+) ')
 
-prog7=re.compile(r'^Seat (\d)') #checks if the seats are top and summary
+# checks if the seats are top and summary
+seatCheckProg=re.compile(r'^Seat (\d)') 
 
 #prog8=re.compile('Bluff Avenue Game #\d+: (.+), Table \d+ - (\$[\d\.]+/\$[\d\.]+) - (\S+ Limit) (\S+) - (\d+:\d+:\d+) \S+ \S+ - (\d+)/(\d+)/(\d+)')
-prog8=re.compile(r'Bluff Avenue Game #\d+: (.+, Table \d+) - (\$[\d\.]+/\$[\d\.]+) - (\S+ Limit) (\S+) - (\d+:\d+:\d+ \S+) \S+ - (\d+)/(\d+)/(\d+)')
+titleProg=re.compile(r'Bluff Avenue Game #\d+: (.+, Table \d+) - (\$[\d\.]+/\$[\d\.]+) - (\S+ Limit) (\S+) - (\d+:\d+:\d+ \S+) \S+ - (\d+)/(\d+)/(\d+)')
 
-prog9=re.compile(r'^(\S+): posts') # for double blind post warning
+# for double blind post warning
+doubleBlindProg=re.compile(r'^(\S+): posts') 
 
-
-# splitCount=0 #for last 4 digit purposes
-gametimeStorage=[] #for time duplication checking, now with gamename too
+#for time duplication checking, now with gamename too
+gametimeStorage=[] 
 for split in split_list:
     straddleFlag=True # for the print of the straddle
-    
-    # splitCount+=1 #to update the splitCount
-    
 
     for line in list(split):
 
@@ -73,11 +75,11 @@ for split in split_list:
         if btnProg.match(line):
             #print(line.find('#'))
             button=line[line.find('#')+1:]
-            #print(button)
+            # print(button)
             split.remove(line)
             break
     
-    first_re=prog8.match(split[0]) #what does this do fuck
+    first_re=titleProg.match(split[0]) #what does this do fuck
     gamename=first_re.group(1) #name of the game's table, with table number
     
     #print(gamename)
@@ -144,8 +146,8 @@ for split in split_list:
             elif line.find('***')==-1:
                 line=line.replace(', and is all in','')
                 line=line.replace('posts $','posts big blind $')
-                line=prog4.sub(r'posts \1 blind',line)
-                line=prog5.sub(r'\1 in chips\2',line)
+                line=blindProg.sub(r'posts \1 blind',line)
+                line=moneyProg.sub(r'\1 in chips\2',line)
                 line=line.replace('straddles for','posts straddle')
                 
                 '''if line.find('straddle') and straddleFlag:
@@ -158,13 +160,13 @@ for split in split_list:
                         #print(prog6.search(line).group(1))
                     line=prog6.sub(r'\1: ',line)
                     
-                if prog7.match(line):
-                    tempString=prog7.match(line).group(1)
+                if seatCheckProg.match(line):
+                    tempString=seatCheckProg.match(line).group(1)
                     #print(tempString)
                     seatStringStorage.append(tempString) #append seat to storage
                     
-                if prog9.match(line):
-                    tempString=prog9.match(line).group(1)
+                if doubleBlindProg.match(line):
+                    tempString=doubleBlindProg.match(line).group(1)
                     #print(tempString)
                     if tempString in blindStringStorage:
                         print('double blind post '+tempString+" "+gametime)
@@ -177,12 +179,12 @@ for split in split_list:
                     
                 
         elif state==3:
-            if prog7.match(line):
-                line=prog7.sub(r'Seat '+str((int(prog7.match(line).group(1))+1)),line)
+            if seatCheckProg.match(line):
+                line=seatCheckProg.sub(r'Seat '+str((int(seatCheckProg.match(line).group(1))+1)),line)
                 
-            if prog7.match(line):
+            if seatCheckProg.match(line):
                 try:
-                    tempString=prog7.match(line).group(1)
+                    tempString=seatCheckProg.match(line).group(1)
                     #print(tempString)
                     seatStringStorage.remove(tempString)
                 except:
