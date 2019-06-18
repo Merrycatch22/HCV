@@ -197,7 +197,7 @@ for split in split_list:
     if len(seatStringStorage)!=0:
         #print("DO X-1! players not removed: "+str(seatStringStorage)+" "+gametime)
         for num in seatStringStorage:
-            progNotRemoved=re.compile('^(Seat '+num+': \S+ \(\$\S+ in chips\))') # find the players sitting out
+            progNotRemoved=re.compile(r'^(Seat '+num+': \S+ \(\$\S+ in chips\))') # find the players sitting out
             #progNotRemoved=re.compile('^(Seat '+num+': \S+ \(.*in chips.*)') # find the players sitting out
             for line in list(split):
                 if progNotRemoved.search(line):
@@ -218,11 +218,11 @@ for split in split_list:
     if system().lower() == 'windows':
         directory = fileName.split("\\")
         fileName=directory[len(directory)-1]
-        output=open('out\out'+fileName,'w')
+        output=open(r'out\out'+fileName,'w')
     else:
         directory = fileName.split("/")
         fileName=directory[len(directory)-1]
-        output=open('out/out'+fileName,'w')
+        output=open(r'out/out'+fileName,'w')
 
 #output2=open('..\..\Desktop\PS_HH\Nicholas\out'+filename,'w')
 for split in split_list:
