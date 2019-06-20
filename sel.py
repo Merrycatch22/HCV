@@ -4,12 +4,16 @@ from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchWindowException
+from selenium.webdriver.common.keys import Keys
 import pyperclip
 
 # TODO: copy hands from the browsers that are running games.
 def copyHands(browser):
     copyAll=ActionChains(browser)
     copyAll.move_by_offset(0,0)
+    copyAll.click()
+
+    copyAll.send_keys(Keys.CONTROL,'A')
 
 # returns true iff the title of the browser is the (logged in) Home Page of Bluff Avenue.
 def isBluffaveHomepage(browser):
