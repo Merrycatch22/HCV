@@ -22,7 +22,7 @@ def isBluffaveHomepage(browser):
 # log into Bluffave with the .creds
 def loginToBluffave(browser):
     browser.get('http://www.bluffave.com/')
-    assert 'Play your own private online poker cash games and tournaments! - Bluff Avenue' in browser.title
+    WebDriverWait(browser,10).until('Play your own private online poker cash games and tournaments! - Bluff Avenue' in browser.title)
     bluffaveUser = browser.find_element_by_xpath('//*[@id="loginForm_email"]')
     bluffaveUser.send_keys(creds[0])
     
