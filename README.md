@@ -5,7 +5,7 @@ A poker suite for a certain Flash based poker site.
 Currently, AHK is used to grab hand histories one at a time from the flash application
  and copypasted every 60 millseconds into a notepad.
 handconvert.py takes in a file of hand histories and converts them into a Pokerstars-like format.
-sel.py - coming soon, upgrading from bash notification system, and hopefully the AHK system too.
+sel.py - simple web automation to open games from the homepage.
 
 ### Prerequisites
 Install python imports via *pip3*:
@@ -26,5 +26,5 @@ something.reg is a jank way of allowing flash to run. Sadly, Chrome is just that
 
     python3 sel.py
 
-    will open all games listed, assuming it follows the pattern.
-    Soon dupes will be removed.
+    will open all games listed on the home screen, assuming a friend is playing in the game.
+    dupes will be removed.
