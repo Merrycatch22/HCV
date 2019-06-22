@@ -38,9 +38,10 @@ def openGames(browser,urls):
     
     while len(bluffaveGames)>0:
         bluffaveGames[0].click()
+        currNumWindows=len(browser.window_handles)
         # print(browser.current_url)
         if browser.current_url not in urls:
-            urls.append(browser.current_url)
+            
             tablesPlayingThisGame = WebDriverWait(browser,10).until(lambda x : x.find_element_by_xpath('//*[@id="cashLobby"]/embed'))
             clickFlash = ActionChains(browser)
             clickFlash.move_to_element_with_offset(tablesPlayingThisGame,190,228)
@@ -50,6 +51,13 @@ def openGames(browser,urls):
             clickFlash.click()
             clickFlash.perform()
         
+        #sad sleeping
+        sleep(3)
+        print(len(browser.window_handles)-currNumWindows)
+        if len(browser.window_handles)-currNumWindows>=1:
+            urls.append(browser.current_url)
+            print(browser.current_url)
+
         browser.get('http://www.bluffave.com/')
         WebDriverWait(browser, 10).until(isBluffaveHomepage)
         i+=1
