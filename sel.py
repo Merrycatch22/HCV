@@ -6,6 +6,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.common.keys import Keys
 import pyperclip
+from collections import defaultdict
 
 # TODO: copy hands from the browsers that are running games.
 def copyHands(browser):
@@ -76,11 +77,13 @@ if __name__ == '__main__':
     chrome_options.add_argument('--always-authorized-plugins=true')
     chrome_options.add_argument("--disable-infobars")
     chrome_options.add_extension('uBlock-Origin_v1.20.0.crx')
+    # may need to generalize for OS compatibility
     browser = webdriver.Chrome('chromedriver.exe',chrome_options=chrome_options)
     
+    # we expect mainHandles[0] to be the main handle.
     mainHandles=browser.window_handles
     assert len(mainHandles)==1
-
+    handLists=defaultdict(list)
     try:
         # browser.minimize_window()
         # browser.set_window_position(0,0)
@@ -91,9 +94,15 @@ if __name__ == '__main__':
         # urls = openGames(browser,urls)
         # print(urls)
         while True:
+            browser.switch_to.window(mainHandles[0])
             urls = openGames(browser,urls)
             # print(browser.window_handles)
 
+            for handle in browser.window_handles:
+                if not handle == mainHandles[0]:
+                    # TODO: grab data!
+                    browser.switch_to.window(handle)
+                    copyHands(browser)
             #try every 60 seconds.
             sleep(60)
     except AssertionError:
