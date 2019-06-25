@@ -19,6 +19,8 @@ def modifySplitList(splitList):
 
     # gets the money on the table
     moneyProg=re.compile(r'^(Seat \d: \S+ \(\S+)(\))')
+
+    playerNameProg=re.compile(r'^(Seat \d: (\S+) \(\S+)(\))')
     prog6=re.compile(r'^(\S+) ')
 
     # checks if the seats are top and summary
@@ -108,7 +110,9 @@ def modifySplitList(splitList):
             if line.find("Side pot")!=-1: #winner of side pot needs to be "won ($XX.xx)"  not "lost"
                 print("Side pot on "+gametime)
             
+            # currently this program cannot handle names with spaces...
             line=line.replace('CMU Brandon','CMUBrandon')
+            line=line.replace('Princess Blossom','PrincessBlossom')
             
             if state<2:
                 state+=1
@@ -154,7 +158,7 @@ def modifySplitList(splitList):
                         
                         
                         
-                    
+            # code to eliminate any people who left their seat.
             elif state==3:
                 if seatCheckProg.match(line):
                     line=seatCheckProg.sub(r'Seat '+str((int(seatCheckProg.match(line).group(1))+1)),line)

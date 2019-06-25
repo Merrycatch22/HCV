@@ -10,11 +10,13 @@ from collections import defaultdict
 
 # TODO: copy hands from the browsers that are running games.
 def copyHands(browser):
-    copyAll=ActionChains(browser)
-    copyAll.move_by_offset(0,0)
-    copyAll.click()
+    pass
+    # copyAll=ActionChains(browser)
+    # copyAll.move_by_offset(0,0)
+    # copyAll.click()
 
-    copyAll.send_keys(Keys.CONTROL,'A')
+    # copyAll.send_keys(Keys.CONTROL,'A')
+    print (browser.current_url)
 
 # returns true iff the title of the browser is the (logged in) Home Page of Bluff Avenue.
 def isBluffaveHomepage(browser):
@@ -104,7 +106,7 @@ if __name__ == '__main__':
                     browser.switch_to.window(handle)
                     copyHands(browser)
             #try every 60 seconds.
-            sleep(60)
+            sleep(6)
     except AssertionError:
         print("AssertionError, title is wrong")
         browser.quit()
