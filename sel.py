@@ -9,15 +9,30 @@ import pyperclip
 from collections import defaultdict
 
 # TODO: copy hands from the browsers that are running games.
-def copyHands(browser):
-    pass
-    # copyAll=ActionChains(browser)
-    # copyAll.move_by_offset(0,0)
-    # copyAll.click()
+def copyHands(browser,handle):
+    if not windowInitd[handle]:
+        handLog=ActionChains(browser)
+        handLog.move_to_element_with_offset(browser.find_element_by_tag_name('body'),116,540)
+        handLog.click()
+        handLog.perform()
 
+        ffwd=ActionChains(browser)
+        ffwd.pause(1)
+        ffwd.move_to_element_with_offset(browser.find_element_by_tag_name('body'),116,650)
+        ffwd.click()
+        ffwd.perform()
+
+        for i in range(20):
+            clearDisc=ActionChains(browser)
+            clearDisc.pause(0.25)
+            
+            clearDisc.move_to_element_with_offset(browser.find_element_by_tag_name('body'),358,385)
+            clearDisc.click()
+            clearDisc.perform()
+        
+        print (browser.current_url)
     # copyAll.send_keys(Keys.CONTROL,'A')
-    print (browser.current_url)
-
+    
 # returns true iff the title of the browser is the (logged in) Home Page of Bluff Avenue.
 def isBluffaveHomepage(browser):
     return browser.title=='Home Page - Bluff Avenue'
@@ -78,14 +93,17 @@ if __name__ == '__main__':
     chrome_options = Options()
     chrome_options.add_argument('--always-authorized-plugins=true')
     chrome_options.add_argument("--disable-infobars")
-    chrome_options.add_extension('uBlock-Origin_v1.20.0.crx')
+    # chrome_options.add_extension('uBlock-Origin_v1.20.0.crx')
     # may need to generalize for OS compatibility
-    browser = webdriver.Chrome('chromedriver.exe',chrome_options=chrome_options)
+    browser = webdriver.Chrome(chrome_options=chrome_options)
     
     # we expect mainHandles[0] to be the main handle.
     mainHandles=browser.window_handles
     assert len(mainHandles)==1
+
+    windowInitd=defaultdict(bool)
     handLists=defaultdict(list)
+    
     try:
         # browser.minimize_window()
         # browser.set_window_position(0,0)
@@ -104,7 +122,7 @@ if __name__ == '__main__':
                 if not handle == mainHandles[0]:
                     # TODO: grab data!
                     browser.switch_to.window(handle)
-                    copyHands(browser)
+                    copyHands(browser,handle)
             #try every 60 seconds.
             sleep(6)
     except AssertionError:
@@ -113,5 +131,4 @@ if __name__ == '__main__':
     except NoSuchWindowException:
         #we've closed a window or it crashed!
         print("window has been closed")
-        print(set(browser.window_handles)-mainHandles)
         # browser.quit()
