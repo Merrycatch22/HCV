@@ -20,6 +20,7 @@ def modifySplitList(splitList):
     # gets the money on the table
     moneyProg=re.compile(r'^(Seat \d: \S+ \(\S+)(\))')
 
+    #TODO: collect player names proper
     playerNameProg=re.compile(r'^(Seat \d: (\S+) \(\S+)(\))')
     prog6=re.compile(r'^(\S+) ')
 
@@ -35,7 +36,8 @@ def modifySplitList(splitList):
     #for time duplication checking, now with gamename too
     gametimeStorage=[] 
     for split in splitList:
-        straddleFlag=True # for the print of the straddle
+        # for the print of the straddle
+        # straddleFlag=True 
 
         for line in list(split):
 
@@ -178,7 +180,7 @@ def modifySplitList(splitList):
         if len(seatStringStorage)!=0:
             #print("DO X-1! players not removed: "+str(seatStringStorage)+" "+gametime)
             for num in seatStringStorage:
-                progNotRemoved=re.compile(r'^(Seat '+num+': \S+ \(\$\S+ in chips\))') # find the players sitting out
+                progNotRemoved=re.compile(r'^(Seat '+num+r': \S+ \(\$\S+ in chips\))') # find the players sitting out
                 #progNotRemoved=re.compile('^(Seat '+num+': \S+ \(.*in chips.*)') # find the players sitting out
                 for line in list(split):
                     if progNotRemoved.search(line):

@@ -6,32 +6,74 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.common.keys import Keys
 import pyperclip
+import re
 from collections import defaultdict
+
+#clear disconnection popups from bluffave i times
+def clearDisc(i):
+    for i in range(20):
+        clearDisc=ActionChains(browser)
+        # clearDisc.pause(0.25)
+        
+        clearDisc.move_to_element_with_offset(browser.find_element_by_tag_name('body'),358,385)
+        clearDisc.click()
+        clearDisc.perform()
 
 # TODO: copy hands from the browsers that are running games.
 def copyHands(browser,handle):
+    clearDisc(20)
+    #if the window handle has not been initialized, i.e. no hands copied proper.
     if not windowInitd[handle]:
         handLog=ActionChains(browser)
+        # click on Hand Log
         handLog.move_to_element_with_offset(browser.find_element_by_tag_name('body'),116,540)
         handLog.click()
         handLog.perform()
 
+        # click on the fast forward button
         ffwd=ActionChains(browser)
         ffwd.pause(1)
+        
         ffwd.move_to_element_with_offset(browser.find_element_by_tag_name('body'),116,650)
         ffwd.click()
         ffwd.perform()
 
-        for i in range(20):
-            clearDisc=ActionChains(browser)
-            clearDisc.pause(0.25)
-            
-            clearDisc.move_to_element_with_offset(browser.find_element_by_tag_name('body'),358,385)
-            clearDisc.click()
-            clearDisc.perform()
+    newHand=True
+    while (newHand):
+        clearDisc(20)
+        copyRawAndNext=ActionChains(browser)
+        copyRawAndNext.move_to_element_with_offset(browser.find_element_by_tag_name('body'),116,600)
         
-        print (browser.current_url)
-    # copyAll.send_keys(Keys.CONTROL,'A')
+        copyRawAndNext.click()
+       
+        copyRawAndNext.key_down(Keys.CONTROL)
+        copyRawAndNext.key_down('a')
+
+        copyRawAndNext.key_up(Keys.CONTROL)
+        copyRawAndNext.key_up('a')
+        
+        copyRawAndNext.key_down(Keys.CONTROL)
+        copyRawAndNext.key_down('c')
+
+        copyRawAndNext.key_up(Keys.CONTROL)
+        copyRawAndNext.key_up('c')
+        
+        copyRawAndNext.move_to_element_with_offset(browser.find_element_by_tag_name('body'),176,650)
+        copyRawAndNext.click()
+        copyRawAndNext.perform()
+
+        currRaw=pyperclip.paste()
+        print(currRaw)
+        if titleProg.match(currRaw) and currRaw not in rawList:
+            windowInitd[handle]=True
+            rawList.append(currRaw)
+            file = open("testFile",'a')
+            file.write(currRaw)
+            file.close()
+        else:    
+            newHand=False
+        
+    print (browser.current_url)
     
 # returns true iff the title of the browser is the (logged in) Home Page of Bluff Avenue.
 def isBluffaveHomepage(browser):
@@ -101,8 +143,11 @@ if __name__ == '__main__':
     mainHandles=browser.window_handles
     assert len(mainHandles)==1
 
+    titleProg=re.compile(r'Bluff Avenue Game #\d+: (.+, Table \d+) - (\$[\d\.]+/\$[\d\.]+) - (\S+ Limit) (\S+) - (\d+:\d+:\d+ \S+) \S+ - (\d+)/(\d+)/(\d+)')
+
     windowInitd=defaultdict(bool)
-    handLists=defaultdict(list)
+    # handLists=defaultdict(list)
+    rawList=[]
     
     try:
         # browser.minimize_window()
