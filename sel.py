@@ -8,6 +8,10 @@ from selenium.webdriver.common.keys import Keys
 import pyperclip
 import re
 from collections import defaultdict
+import datetime
+
+#file to store raws
+FILENAME = "rawhands"
 
 #clear disconnection popups from bluffave i times
 def clearDisc(i):
@@ -67,7 +71,7 @@ def copyHands(browser,handle):
         if titleProg.match(currRaw) and currRaw not in rawList:
             windowInitd[handle]=True
             rawList.append(currRaw)
-            file = open("testFile",'a')
+            file = open(FILENAME),'a+')
             file.write(currRaw)
             file.close()
         else:    
@@ -167,6 +171,7 @@ if __name__ == '__main__':
                 if not handle == mainHandles[0]:
                     # TODO: grab data!
                     browser.switch_to.window(handle)
+                    browser.set_window_position(0,0)
                     copyHands(browser,handle)
             #try every 60 seconds.
             sleep(6)
