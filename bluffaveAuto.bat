@@ -1,1 +1,1 @@
-python3 sel.py
+python sel.py
